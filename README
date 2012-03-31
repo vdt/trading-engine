@@ -25,7 +25,7 @@ then building the trading engine is as simple as:
 $ make
 
 If libcore has been installed elsewhere, then specify the location
-of libcore's include files and library like so:
+of libcore's include files and shared library like so:
 
 $ LIBCORE_INCDIR=<path/to/libcore/include/dir> LIBCORE_LIBDIR=<path/to/libcore/libdir> make -e
 
