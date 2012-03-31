@@ -1,0 +1,7 @@
+*.o
+*.core
+*.gmon
+.*.swp
+
+trading-engine
+test-client
