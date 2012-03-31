@@ -5,7 +5,7 @@ This project implements a very simple multi-threaded trading engine
 for a securites market. It is based on libcore, and supports creating
 a market for trading in multiple securities.
 
-The trading endinge code is released under the Modified BSD license.
+The trading engine code is released under the Modified BSD license.
 
 
 Prerequisites
@@ -33,16 +33,16 @@ $ LIBCORE_INCDIR=<path/to/libcore/include/dir> LIBCORE_LIBDIR=<path/to/libcore/l
 Running
 =======
 
-Start the trading server:
+Start the trading engine server:
 
 $ ./trading-engine
 
-Switch to a different shell, and spawn the test clients who will send orders to
+Switch to a different shell, and spawn the test clients that will send orders to
 the trading engine server on the localhost:
 
 $ ./spawn_clients.sh
 
-The trading server will print out some basic statistics every 5 seconds.
+The trading engine server will print out some basic statistics every 5 seconds.
 
 Kill the server with CTRL-C. The test clients will automatically exit when the
 server closes the socket.
