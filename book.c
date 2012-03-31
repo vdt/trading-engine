@@ -125,9 +125,9 @@ void* _book_fill_orders(void *arg)
 
     b = (Book *)arg;
 
-    while(b->book_is_open) {
-        pthread_mutex_lock(&b->matcher_mutex);
+    pthread_mutex_lock(&b->matcher_mutex);
 
+    while(b->book_is_open) {
         bid   = (Order *)heap_top(b->buy);
         quote = (Order *)heap_top(b->sell);
 
@@ -182,9 +182,6 @@ void* _book_fill_orders(void *arg)
                 order_set_quantity(quote, (quote_quantity - bid_quantity));
                 order_free((Order *)heap_pop(b->buy));
             }
-
-            /* Unlock here to allow new orders to come in */
-            pthread_mutex_unlock(&b->matcher_mutex);
         } else {
             pthread_cond_wait(&b->matcher_cond, &b->matcher_mutex);
         }
