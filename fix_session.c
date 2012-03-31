@@ -280,8 +280,8 @@ FixSession* fix_session_create(String *SenderCompId,
     pthread_mutex_init(&session->mutex, &mutex_attr);
     pthread_mutexattr_destroy(&mutex_attr);
 
-    session->rx_cond = PTHREAD_COND_INITIALIZER;
-    session->tx_cond = PTHREAD_COND_INITIALIZER;
+    pthread_cond_init(&session->rx_cond, NULL);
+    pthread_cond_init(&session->tx_cond, NULL);
 
     session->rx_seq_num = 1;
     session->tx_seq_num = 1;
@@ -295,6 +295,8 @@ void fix_session_free(FixSession *session)
 
     fix_session_deactivate(session);
 
+    pthread_cond_destroy(&session->rx_cond);
+    pthread_cond_destroy(&session->tx_cond);
     pthread_mutex_destroy(&session->mutex);
 
     string_free(session->SenderCompId);
