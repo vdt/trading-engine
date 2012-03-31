@@ -48,6 +48,8 @@
 
 #define BUFSZ           256
 
+static pthread_t server_thread;
+
 static String *fix_server_id = NULL;
 static int server_socket = -1;
 static int server_done = 0;
@@ -126,7 +128,7 @@ static void fix_server_read_logon(int socket)
     DBG("Server is done waiting for data from client\n");
 }
 
-void fix_server_init(void)
+static void* _fix_server(void *data)
 {
     struct sockaddr_in addr;
     int c;
@@ -155,6 +157,13 @@ void fix_server_init(void)
         DBG("New client\n");
         fix_server_read_logon(c);
     }
+
+    return NULL;
+}
+
+void fix_server_init(void)
+{
+    pthread_create(&server_thread, NULL, _fix_server, NULL);
 }
 
 void fix_server_destroy(void)
@@ -165,6 +174,8 @@ void fix_server_destroy(void)
 
     shutdown(server_socket, SHUT_RDWR);
     close(server_socket);
+
+    pthread_join(server_thread, NULL);
 
     string_free(fix_server_id);
 }
