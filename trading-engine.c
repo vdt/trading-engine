@@ -35,42 +35,40 @@
 
 #include "market.h"
 
-static unsigned long long alrm_count = 0;
-void sigalrm_handler(int sig)
-{
-    unsigned long long total_volume;
-
-    signal(SIGALRM, SIG_IGN);
-
-    alrm_count++;
-    total_volume = market_get_total_volume();
-
-    printf("Market total volume: %llu\n", total_volume);
-    printf("Volume per second: %llu\n\n", (total_volume / (5 * alrm_count)));
-
-    alarm(5);
-    signal(SIGALRM, sigalrm_handler);
-}
+static int done = 0;
 
 void sigint_handler(int sig)
 {
-    fix_server_destroy();
-    fix_session_manager_destroy();
-    market_close();
-
-    exit(0);
+    done = 1;
 }
 
 int main(int argc, char *argv[])
 {
-    signal(SIGINT, sigint_handler);
-    signal(SIGALRM, sigalrm_handler);
+    unsigned long long total_volume;
+    unsigned long long count;
 
-    alarm(5);
+    signal(SIGINT, sigint_handler);
 
     market_open();
     fix_session_manager_init();
     fix_server_init();
+
+    count = 0;
+    total_volume = 0;
+
+    while(!done) {
+        count++;
+        total_volume = market_get_total_volume();
+
+        printf("Market total volume: %llu\n", total_volume);
+        printf("Volume per second: %llu\n\n", (total_volume / (5 * count)));
+
+        sleep(5);
+    }
+
+    fix_server_destroy();
+    fix_session_manager_destroy();
+    market_close();
 
     return 0;
 }
