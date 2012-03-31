@@ -233,8 +233,8 @@ Book* book_open(const String *symbol)
 
     new_book->book_is_open = 1;
 
-    new_book->matcher_mutex = PTHREAD_MUTEX_INITIALIZER;
-    new_book->matcher_cond  = PTHREAD_COND_INITIALIZER;
+    pthread_mutex_init(&new_book->matcher_mutex, NULL);
+    pthread_cond_init(&new_book->matcher_cond, NULL);
 
     /* Create matcher thread with a high priority */
     pthread_attr_init(&attr);
@@ -260,6 +260,9 @@ void book_close(Book *b)
     pthread_cond_signal(&b->matcher_cond);
 
     pthread_join(b->matcher_thread, NULL);
+
+    pthread_cond_destroy(&b->matcher_cond);
+    pthread_mutex_destroy(&b->matcher_mutex);
 
     string_free(b->symbol);
     heap_free(b->buy);
