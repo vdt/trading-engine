@@ -376,11 +376,11 @@ int fix_session_deactivate(FixSession *session)
         pthread_cond_signal(&session->rx_cond);
         pthread_mutex_unlock(&session->mutex);
 
-        if(pthread_equal(pthread_self(), session->rx_thread) != 0) {
+        if(pthread_equal(pthread_self(), session->rx_thread) == 0) {
             pthread_join(session->rx_thread, NULL);
         }
 
-        if(pthread_equal(pthread_self(), session->tx_thread) != 0) {
+        if(pthread_equal(pthread_self(), session->tx_thread) == 0) {
             pthread_join(session->tx_thread, NULL);
         }
 
@@ -388,7 +388,7 @@ int fix_session_deactivate(FixSession *session)
         close(session->socket);
         session->socket = -1;
 
-        if(pthread_equal(pthread_self(), session->socket_thread) != 0) {
+        if(pthread_equal(pthread_self(), session->socket_thread) == 0) {
             pthread_join(session->socket_thread, NULL);
         }
     } else {
