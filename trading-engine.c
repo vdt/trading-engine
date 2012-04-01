@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
         last_volume = total_volume;
         last_filled = total_filled;
 
-        sleep(5);
+        sleep(WAIT_SECONDS);
     }
 
     fix_server_destroy();
