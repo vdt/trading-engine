@@ -37,6 +37,7 @@ int market_process_order    (Order *o);
 
 int market_is_open          (void);
 
-unsigned long long market_get_total_volume  (void);
+unsigned long long market_get_total_volume          (void);
+unsigned long long market_get_total_orders_filled   (void);
 
 #endif

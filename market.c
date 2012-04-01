@@ -130,3 +130,21 @@ unsigned long long market_get_total_volume(void)
 
     return volume;
 }
+
+unsigned long long market_get_total_orders_filled(void)
+{
+    unsigned long long orders;
+    MapIterator *it;
+
+    orders = 0;
+
+    pthread_mutex_lock(&mutex);
+    if(is_open) {
+        for(it = map_begin(book_table); it != NULL; it = map_next(it)) {
+            orders += book_get_orders_filled((const Book *)map_get_value(it));
+        }
+    }
+    pthread_mutex_unlock(&mutex);
+
+    return orders;
+}
