@@ -35,6 +35,8 @@
 
 #include "market.h"
 
+#define WAIT_SECONDS    5
+
 static int done = 0;
 
 void sigint_handler(int sig)
@@ -44,8 +46,8 @@ void sigint_handler(int sig)
 
 int main(int argc, char *argv[])
 {
-    unsigned long long total_volume;
-    unsigned long long count;
+    unsigned long long total_volume, last_volume;
+    unsigned long long total_filled, last_filled;
 
     signal(SIGINT, sigint_handler);
 
@@ -53,15 +55,22 @@ int main(int argc, char *argv[])
     fix_session_manager_init();
     fix_server_init();
 
-    count = 0;
-    total_volume = 0;
+    total_volume = last_volume = 0;
+    total_filled = last_filled = 0;
 
     while(!done) {
-        count++;
         total_volume = market_get_total_volume();
+        total_filled = market_get_total_orders_filled();
 
         printf("Market total volume: %llu\n", total_volume);
-        printf("Volume per second: %llu\n\n", (total_volume / (5 * count)));
+        printf("Volume per second: %llu\n",
+                (total_volume - last_volume) / WAIT_SECONDS);
+        printf("Market total orders filled: %llu\n", total_filled);
+        printf("Orders filled per second: %llu\n\n",
+                (total_filled - last_filled) / WAIT_SECONDS);
+
+        last_volume = total_volume;
+        last_filled = total_filled;
 
         sleep(5);
     }
