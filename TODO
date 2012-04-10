@@ -1,0 +1,44 @@
+FIX Engine
+    * Actually manage FIX sessions properly
+    * Parsing FIX messages is the most CPU-intensive activity
+      in the whole system. Probably need to rethink the current
+      approach (separate out the FIX engine entirely?)
+    * What is the best buffer size for reading from a socket?
+      Small so that overall latency is low? High so as to minimize
+      number of context switches?
+    * Add support for all message types
+    * Add backing store to keep a log of sent/received messages
+    * Add support for gap fill
+    * Support different versions of FIX?
+
+System-Wide Improvements
+    * Actually check return codes for errors on all of the
+      system-level calls (pthread, sockets, etc.)
+    * Need to run more performance tests on newer hardware
+    * Profile threading performance. The trading engine creates
+      a lot of threads, depending on how many books are open and
+      how many clients are connected. Are those threads contending
+      poorly for access to shared resources? How does the kernel
+      scheduler cope with many threads under high load?
+    * Add unit tests
+
+Order Matching/Book
+    * Add a transaction logging system to keep a record of
+      filled orders
+    * Hook into the FIX engine to send order acknowledgment and
+      order fill reports
+    * Add support for multicast and TCP market data feeds
+    * Matching algorithm based on binary heaps works ok, but doesn't
+      seem optimal. Is there any way to exploit the fact that
+      bids and asks tend to cluster around a security's current
+      price? Binary heaps also don't seem to work well for canceling
+      or otherwise changing orders - direct access into the heap is
+      slow because the heap is ordered according to the heap property.
+      Need to augment the book with some kind of table of all open
+      orders that would facilitate quicker direct access?
+    * Add support for other order types
+
+Research Topics
+    * How to price a security?
+    * How to route orders to other exchanges?
+    * How to fill order on other exchanges who may have a better price?
