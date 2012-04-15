@@ -76,7 +76,7 @@ static void fix_server_read_logon(int socket)
             string_append_buf(buffer, buf, n);
             /* Find BeginString tag and CheckSum tag */
             if((string_find(buffer, "8=", &msg_start_idx) == 0) &&
-                    (string_rfind(buffer, "\00110=", &msg_end_idx) == 0)) {
+                    (string_find(buffer, "\00110=", &msg_end_idx) == 0)) {
                 /* Length of "<SOH>10=xxx<SOH>" is 8 characters */
                 if((string_length(buffer) - msg_end_idx) >= 8) {
                     /* Extract FIX message. Index of final SOH is
@@ -133,12 +133,7 @@ static void* _fix_server(void *data)
     struct sockaddr_in addr;
     int c;
 
-    printf("FIX Server init\n");
-
     server_done = 0;
-
-    fix_server_id = string_create_from_buf(FIX_SERVER_ID,
-            strlen(FIX_SERVER_ID));
 
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -163,6 +158,11 @@ static void* _fix_server(void *data)
 
 void fix_server_init(void)
 {
+    printf("FIX Server init\n");
+
+    fix_server_id = string_create_from_buf(FIX_SERVER_ID,
+            strlen(FIX_SERVER_ID));
+
     pthread_create(&server_thread, NULL, _fix_server, NULL);
 }
 
